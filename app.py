@@ -7,6 +7,10 @@ import io
 app = Flask(__name__)
 CORS(app)  # allow Flutter app to call
 
+@app.route("/", methods=["GET"])
+def index():
+    return {"status": "ok", "message": "Background Remover API is running!"}
+
 @app.route("/remove-bg", methods=["POST"])
 def remove_bg():
     if "file" not in request.files:
@@ -20,6 +24,3 @@ def remove_bg():
     output.save(img_io, "PNG")
     img_io.seek(0)
     return send_file(img_io, mimetype="image/png")
-@app.route("/", methods=["GET"])
-def index():
-    return {"status": "ok", "message": "Background Remover API is running!"}

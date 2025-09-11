@@ -20,3 +20,6 @@ def remove_bg():
     output.save(img_io, "PNG")
     img_io.seek(0)
     return send_file(img_io, mimetype="image/png")
+@app.route("/", methods=["GET"])
+def index():
+    return {"status": "ok", "message": "Background Remover API is running!"}

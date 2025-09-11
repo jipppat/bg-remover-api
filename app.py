@@ -3,6 +3,7 @@ from flask_cors import CORS
 from rembg import remove
 from PIL import Image
 import io
+import os
 
 app = Flask(__name__)
 CORS(app)  # allow Flutter app to call
@@ -24,3 +25,8 @@ def remove_bg():
     output.save(img_io, "PNG")
     img_io.seek(0)
     return send_file(img_io, mimetype="image/png")
+
+if __name__ == "__main__":
+    # ✅ ใช้ PORT ที่ Render ส่งมา ถ้าไม่มีใช้ค่า default = 5000
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

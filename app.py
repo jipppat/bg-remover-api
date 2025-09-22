@@ -8,25 +8,25 @@ import os
 app = Flask(__name__)
 CORS(app)  # allow Flutter app to call
 
-@app.route("/", methods=["GET"])
-def index():
-    return {"status": "ok", "message": "Background Remover API is running!"}
-
 @app.route("/remove-bg", methods=["POST"])
 def remove_bg():
-    if "file" not in request.files:
-        return {"error": "no file"}, 400
-
     try:
-        file = request.files["file"]
-        input_image = Image.open(file.stream).convert("RGB")  # ✅ ป้องกัน CMYK/alpha
+        if "file" not in request.files:
+            print("❌ No file in request")
+            return {"error": "no file"}, 400
 
-        output = remove(input_image)
+        file = request.files["file"]
+        input_image = Image.open(file.stream)
+        print(f"✅ Received file: {file.filename}, size={file.content_length}")
+
+        output = remove(input_image)  # rembg
 
         img_io = io.BytesIO()
         output.save(img_io, "PNG")
         img_io.seek(0)
+
         return send_file(img_io, mimetype="image/png")
     except Exception as e:
-        return {"error": str(e)}, 500   # ✅ ถ้ามี error จะส่ง JSON กลับ
+        print(f"🔥 Exception: {e}")
+        return {"error": str(e)}, 500
 

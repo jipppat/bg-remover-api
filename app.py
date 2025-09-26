@@ -1,7 +1,7 @@
 # app.py
 import os
 import io
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from rembg import remove
 from PIL import Image
@@ -26,11 +26,12 @@ def remove_bg():
         img_io = io.BytesIO()
         output.save(img_io, "PNG")
         img_io.seek(0)
-        return send_file(img_io, mimetype="image/png")
+
+        # ✅ ส่ง binary image กลับมาแทน JSON
+        return Response(img_io.getvalue(), mimetype="image/png")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Only start Flask dev server if executed directly (won't run under gunicorn).
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)

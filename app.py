@@ -25,16 +25,17 @@ def remove_bg():
         input_image = Image.open(file.stream).convert("RGBA")
 
         # ✅ Resize ถ้ารูปใหญ่เกิน 800px
-        if input_image.width > 800:
-            ratio = 800 / float(input_image.width)
-            height = int(float(input_image.height) * ratio)
-            input_image = input_image.resize((800, height), Image.LANCZOS)
+        if input_image.width > 600:
+         ratio = 600 / float(input_image.width)
+        height = int(float(input_image.height) * ratio)
+        input_image = input_image.resize((600, height), Image.LANCZOS)
+
 
         # ใช้ session ที่โหลดไว้แล้ว
         output = remove(input_image, session=session)
 
         img_io = io.BytesIO()
-        output.save(img_io, "PNG")
+        output.save(img_io, "PNG", optimize=True, compress_level=9)
         img_io.seek(0)
         return send_file(img_io, mimetype="image/png")
     except Exception as e:

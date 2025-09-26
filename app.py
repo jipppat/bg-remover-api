@@ -1,14 +1,15 @@
+# app.py
 import os
 import io
 from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
-from rembg import remove, new_session   # ใช้ new_session
+from rembg import remove, new_session
 from PIL import Image
 
 app = Flask(__name__)
 CORS(app)
 
-# โหลด session ของ u2netp (เบา ใช้ RAM น้อยกว่า)
+# ✅ ใช้ u2netp (เบา)
 session = new_session("u2netp")
 
 @app.route("/", methods=["GET"])
@@ -24,18 +25,16 @@ def remove_bg():
         file = request.files["file"]
         input_image = Image.open(file.stream).convert("RGBA")
 
-        # ✅ Resize ถ้ารูปใหญ่เกิน 800px
+        # ✅ Resize ถ้ารูปกว้างเกิน 600px
         if input_image.width > 600:
-         ratio = 600 / float(input_image.width)
-        height = int(float(input_image.height) * ratio)
-        input_image = input_image.resize((600, height), Image.LANCZOS)
+            ratio = 600 / float(input_image.width)
+            height = int(float(input_image.height) * ratio)
+            input_image = input_image.resize((600, height), Image.LANCZOS)
 
-
-        # ใช้ session ที่โหลดไว้แล้ว
         output = remove(input_image, session=session)
 
         img_io = io.BytesIO()
-        output.save(img_io, "PNG", optimize=True, compress_level=9)
+        output.save(img_io, "PNG")
         img_io.seek(0)
         return send_file(img_io, mimetype="image/png")
     except Exception as e:

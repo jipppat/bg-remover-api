@@ -11,7 +11,7 @@ CORS(app)
 
 @app.route("/", methods=["GET"])
 def index():
-    return jsonify({"status":"ok","message":"Background Remover API is running!"})
+    return {"status": "ok", "message": "Background Remover API is running!"}
 
 @app.route("/remove-bg", methods=["POST"])
 def remove_bg():

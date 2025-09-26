@@ -1,7 +1,7 @@
 # app.py
 import os
 import io
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from rembg import remove
 from PIL import Image
@@ -23,12 +23,12 @@ def remove_bg():
         input_image = Image.open(file.stream).convert("RGBA")
         output = remove(input_image)
 
-        img_io = io.BytesIO()
-        output.save(img_io, "PNG")
-        img_io.seek(0)
+        # ✅ บันทึกไฟล์ลง temp ก่อน
+        temp_path = "output.png"
+        output.save(temp_path, "PNG")
 
-        # ✅ ส่ง binary image กลับมาแทน JSON
-        return Response(img_io.getvalue(), mimetype="image/png")
+        # ✅ ส่งไฟล์ออกไป
+        return send_file(temp_path, mimetype="image/png")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
